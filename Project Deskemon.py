@@ -1,0 +1,314 @@
+import time
+import random
+import sys
+
+game_key = random.randrange(11111, 99999)
+
+# Combat System -------
+
+def battle_menu():
+    print("BATTLE MENU:\n")
+    print("\t(1) ATTACK")
+    print("\t(2) SPECIAL ATTACK")
+    print("\t(3) RUN AWAY")
+ 
+def deskemon_selection_menu():
+    print("DESKEMON MENU:\n")
+    print("\t(1) TIMOSHA")
+    print("Capable of fast attacks and accuracy, high mobility and stamina, low defense and average health pool.")
+    print("Special attack: MINDF***. Sacrifice your attack accuracy to increase your health.")
+    print("\t(2) PICKAPOO")
+    print("All rounder in attack, strength and defense, but has low stamina with a decent health pool.")
+    print("Special attack: FLATULENCE BOLTS. Fire bolts of high concentrations of flatulence and increase your stamina but decrease your attack accuracy")
+    print("\t(3) LILWILLY")
+    print("High strength and health pool, low attack, defense and mobility.")
+    print("Special attack: WHITE LIES. Use with a high accuracy, high strength attack but sacrifing some of your health.")
+    print("\t(4) BIGGBOI")
+    print("Very low attack accuracy, decent strength, but very high levels of defense and constitution.")
+    print("Special attack: STEELWALL. Become invincible for two turns.")
+    print("\nRemember that all special attacks are permanent during the battle!")
+    print("\nEnter your selection code:")
+
+class Deskemon(object):
+    def __init__(self, name, health, damage, defense):
+        self.base_name = name
+        self.base_health = health
+        self.base_damage = damage
+        self.base_defense = defense
+ 
+        self.name = self.base_name
+        self.health = self.base_health
+        self.damage = self.base_damage
+        self.defense = self.base_defense
+       
+    def attack(self):
+        return random.randrange(*self.damage)
+       
+    def defend(self):
+        return random.randrange(*self.defense)
+   
+    def specialattack(self, opponent):
+        return self.attack()
+     
+    def is_alive(self):
+        self.is_dead = self.health <= 0
+        return not self.is_dead
+       
+    def revive(self):
+        self.health = self.base_health
+        return True
+   
+    def run_away(self):
+        R = float( self.defense[1] - self.defense[0] )  / self.defense[0]  
+        return R <= random.random()
+         
+    def __repr__(self):
+        return self.name
+           
+def Deskemon_Attack(attacker, defender, special=False):
+    if attacker.is_dead:
+        return False
+       
+    if special:
+        print("{} ATTEMPTS SPECIAL".format(attacker))
+        damage_dealt = max(0, attacker.specialattack(defender)
+                               - int(defender.is_alive()) * defender.defend())
+    else:
+        damage_dealt = max(0, attacker.attack() - defender.defend())
+       
+    defender.health -= damage_dealt
+    print("{} HAS INFLICTED {} TO {}".format(attacker, damage_dealt, defender))
+    if defender.is_alive():
+        print("{} HAS {} HITPOINTS LEFT!".format(defender, defender.health))
+        return True    
+    else:
+        print("{} HAS BEEN SLAIN BY {}!".format(defender, attacker))
+        return True
+ 
+def Battle(D1, D2):
+    print("LET'S GO BATTLE!")
+    while D1.is_alive() and D2.is_alive():
+        battle_menu()
+        choice = input("> ")
+        if choice == '1':
+            Deskemon_Attack(D1, D2)
+        elif choice == '2':
+            Deskemon_Attack(D1, D2, special=True)            
+        elif choice == '3':
+            if D1.run_away():
+                print('{} sucessfully ran away!'.upper().format(D1))
+                break
+            else:
+                print('{} failed to run away!'.upper().format(D1))                    
+        else:
+            continue
+           
+        time.sleep(1)
+        print("...")
+        time.sleep(1)
+        print("...")
+        time.sleep(1)
+        print("...")
+        time.sleep(1)
+ 
+        Deskemon_Attack(D2, D1, special=(random.random() <= .25))
+
+def recall_last(func):
+    def _inner(*args, **kwargs):
+        if args:
+            func.last_dealt = func(*args,**kwargs)
+        else:
+            func.last_dealt = getattr(func,'last_dealt',0)
+        return func.last_dealt
+    return _inner
+
+@recall_last
+def rand_damage(*values):
+    return random.randrange(*values)
+
+jack_health = 300
+jack_damage = random.randrange(1, 10)
+jack_defense = random.randrange(1, 5)
+
+boss_health = 700
+boss_damage = random.randrange(10, 15)
+boss_defense = random.randrange(15, 20)
+def boss_specialattack(my_defense):
+    my_defense = my_defense - 10
+boss_killed = False
+
+# ---------------------
+
+print("Welcome to Deskemon!")
+print("\nBefore we can begin, we'll make sure you're not stupid.")
+start_loop = True
+while start_loop:
+    print("Type " + str(game_key) + " to play the game!")
+    start_loop_input = input("> ")
+    if int(start_loop_input) == game_key:
+      start_loop = False
+    elif start_loop_input == "":
+      start_loop = True
+print("What will you name yourself?")
+name = input("> ")
+print("Your name is: " + name)
+print("Let the game begin!")
+time.sleep(3)
+print("\n\nThe year is 1345 AD.")
+time.sleep(2)
+print("\nThe world is filled with creatures known as Deskemons.")
+time.sleep(3)
+print("\nHumanity has tamed these creatures to become their loyal servants.")
+time.sleep(3)
+print("\nSome of the Desksmon tamers have become masters and tame Deskemons within seconds.")
+time.sleep(2)
+print("\nOthers for war and evil.")
+time.sleep(2)
+print("\nBut you are a simple boy, wanting an adventure in your life.")
+time.sleep(2)
+print("And this is your story:")
+time.sleep(2)
+print("You are downstairs, at home")
+time.sleep(1)
+outdoor_status_loop = True
+while outdoor_status_loop:
+    print("\n" + r"You have two options:")
+    time.sleep(1)
+    print("\n>(1)Go to the local Deskemon center.\n>(2)Stay at home.")
+    outdoor_status_input = input("> ")
+    if outdoor_status_input == "1":
+        print(r"You walk to the Auderban's Deskemon Center to get your first Deskemon.")
+        outdoor_status_loop = False
+    elif outdoor_status_input == "2":
+        print("You talk to your mother.")
+        time.sleep(1)
+        print("\n" + name + " (You): Hey mom.")
+        time.sleep(1)
+        print("\nMom: Hi sweety.")
+        time.sleep(1)
+        print("\n" + r"Mom: I've heard that there's something strange south of town.")
+        time.sleep(1)
+        print("\nMom: Something about a corrupted doctor, killing everyone with his band of Deskemons.")
+        time.sleep(1)
+        print("\n" + name + " (You): Gee, sounds bad.")
+        time.sleep(1)
+        print("\n" + name + r" (You): And I don't even have a deskemon!")
+        time.sleep(1)
+        print("\n" + r"Mom: You can get one at Auderban's.")
+        time.sleep(1)
+        print("\nMom: I heard that his very weakness is...")
+        time.sleep(1)
+        print("\nMom: White lies...")
+        time.sleep(1)
+        print("\nMom: But anyways, you better get your first Deskemon, have fun now!")
+        time.sleep(1)
+        print("\n" + name + " (You): Thanks mum!")
+        outdoor_status_loop = False
+    elif outdoor_status_input == "":
+        outdoor_status_loop = True
+time.sleep(1)
+print("\n\nYou walk and arrive to the local Deskemon center.")
+time.sleep(2)
+print("\nIn the centre, you see a variety of different Deskemons.")
+time.sleep(1)
+print("\n" + r"A man walks up to you wearing a lap coat, which has a name tag: 'Professor Aubrey'.")
+time.sleep(1)
+print("\n" + name + r": Yeah, I'm looking for a Deskemon, something cheap 'cause this is my first.")
+time.sleep(1)
+print("\n" + r"Professor Aubrey: Well, you're in luck. Our new batch of fresh Pickpoo's has just hatc...")
+time.sleep(1)
+print("\nJack: MINE MINE MINE!")
+time.sleep(2)
+print("\nProfessor Aubrey: Jack, when this young gentleman has finished, I will give you your new Deskemon.")
+time.sleep(1)
+print("\nJack: I WANT MINE NOW!")
+time.sleep(1)
+print("\nProfessor Aubrey: Well, err...")
+time.sleep(1)
+print("\n" + name + ": " + name + ".")
+time.sleep(1)
+print("\n" + r"Professor Aubrey: Well then " + name + ", I suppose you better pick your Deskemon quickly. Otherwise Jack'll go on a tantrum.")
+time.sleep(1)
+print("\nProfessor Aubrey: You can use the Deskemon selection console on your right, choose wisely!")
+time.sleep(1)
+print("\n\nYou walk up to the console and switches on, 4 different types of Deskemon pops up on the screen.")
+time.sleep(1)
+print("...")
+time.sleep(1)
+print("...")
+time.sleep(1)
+print("...")
+time.sleep(1)
+print("\nWELCOME TO THE DESKEMON SELECTION CONSOLE")
+time.sleep(1)
+print("WE HAVE A TOTAL OF 4 DESKEMONS READY FOR TAMING")
+time.sleep(1)
+## DEFINE DESKEMONS
+ 
+    # CHIPHEAD                
+Jack = Deskemon('CHIPHEAD', 300, (1, 10), (1, 5))
+ 
+    # BOSS
+Boss = Deskemon('BOSS', 700, (10, 15), (15, 20))
+ 
+def boss_specialattack(opponent):
+    opponent.defense = map(lambda x: x - 10, opponent.defense)
+    print('{} defense have fallen sharply!'.upper().format(opponent))
+    return 0
+Boss.specialattack = boss_specialattack
+ 
+    # TIMOSHA
+ 
+TIMOSHA = Deskemon('TIMOSHA', 500, (25, 30), (10, 15))
+ 
+    # PICKAPOO
+   
+PICKAPOO = Deskemon('PICKAPOO', 750, (25, 30), (20, 25))
+ 
+    # LILWILLY
+   
+LILWILLY = Deskemon('LILWILLY', 1000, (40, 45), (10, 15))
+def LILWILLY_specialattack(opponent):
+    if opponent.name == 'BOSS':
+        damage_dealt = opponent.health
+        opponent.health = 0
+    return damage_dealt
+LILWILLY.specialattack = LILWILLY_specialattack
+ 
+    # BIGGBOI
+   
+BIGGBOI = Deskemon('BIGGBOI', 2000, (10, 15), (50, 60))
+deskemon_selection_loop = True
+if '__main__' == __name__:
+    while True:
+        deskemon_selection_menu()
+        deskemon_selection_input = input("> ")
+        if deskemon_selection_input == "1":
+            deskemon = TIMOSHA
+        elif deskemon_selection_input == "2":
+            deskemon = PICKAPOO
+        elif deskemon_selection_input == "3":
+            deskemon = LILWILLY
+        elif deskemon_selection_input == "4":
+            deskemon = BIGGBOI
+        else:
+            continue
+        print("You have selected {} as your Deskemon".upper().format(deskemon))
+        break
+
+print("Professor Aubrey: Alright Jack, it's time to pick your Deskemon.")
+time.sleep(1)
+print("Jack: Hell yeah!.")
+time.sleep(1)
+print("JACK CHOSE CHIPHEAD!")
+time.sleep(1)
+print("Jack: OI! " + name + "!")
+time.sleep(1)
+
+Battle(deskemon, Jack)
+
+print("JACK: NOO!")
+print("JACK: I'LL GET YOU NEXT TIME!")
+time.sleep(1)
+print("THE END!")
+            
